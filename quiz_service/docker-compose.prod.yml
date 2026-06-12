@@ -51,7 +51,9 @@ services:
       - POSTGRES_USER=${QUIZ_DB_USER:-quiz}
       - POSTGRES_PASSWORD=${QUIZ_DB_PASSWORD:?QUIZ_DB_PASSWORD is required}
       - POSTGRES_DB=${QUIZ_DB_NAME:-quiz_db}
-      - BACKEND_CORS_ORIGINS=https://gh.uz,https://www.gh.uz
+      # ВРЕМЕННО для тестирования: разрешить любой Origin.
+      # Перед публичным запуском вернуть: https://gh.uz,https://www.gh.uz
+      - BACKEND_CORS_ORIGINS=*
       - TZ=Asia/Tashkent
     command: sh -c "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 8000"
     # --- Харднинг: контейнер не сможет поднять привилегии ---

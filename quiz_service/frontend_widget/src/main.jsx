@@ -29,7 +29,14 @@ const App = ({ quizId, apiBase }) => {
 
 const rootElement = document.getElementById('quiz-widget-container');
 if (rootElement) {
-  const quizId = rootElement.getAttribute('data-quiz-id') || '1';
+  // Приоритет: data-quiz-id из тега → последний сегмент URL (/quiz/widget/<id>)
+  // → ?id=<id> → '1' по умолчанию.
+  const idFromAttr = rootElement.getAttribute('data-quiz-id');
+  const pathMatch = window.location.pathname.match(/\/quiz\/widget\/(\d+)(?:\/)?$/);
+  const idFromPath = pathMatch ? pathMatch[1] : null;
+  const idFromQuery = new URLSearchParams(window.location.search).get('id');
+  const quizId = idFromAttr || idFromPath || idFromQuery || '1';
+
   // API base: можно переопределить через data-api-base, по умолчанию — прод-шлюз
   const apiBase = rootElement.getAttribute('data-api-base') || 'https://analytics.gh.uz/quiz/api/v1';
   ReactDOM.createRoot(rootElement).render(
