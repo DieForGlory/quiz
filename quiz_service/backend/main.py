@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -9,11 +10,16 @@ app = FastAPI(title="Quiz API")
 # ДОБАВИТЬ ЭТОТ БЛОК
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # В продакшене заменить на ["http://localhost:5173", "http://localhost:5174"]
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=[o.strip() for o in os.environ.get("BACKEND_CORS_ORIGINS", "https://gh.uz,https://www.gh.uz").split(",") if o.strip()],
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Content-Type"],
 )
+
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}
 
 # Подключение роутеров (оставить существующие)
 app.include_router(admin.router, prefix="/api/v1")

@@ -4,6 +4,8 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "Quiz Service"
     VERSION: str = "1.0.0"
     API_V1_STR: str = "/api/v1"
+    # Список разрешённых CORS-origins через запятую
+    BACKEND_CORS_ORIGINS: str = "https://gh.uz,https://www.gh.uz"
     POSTGRES_USER: str = "postgres"
     POSTGRES_PASSWORD: str = "postgres"
     POSTGRES_SERVER: str = "db"

@@ -3,6 +3,8 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
+  // Статика виджета раздаётся шлюзом под /quiz/widget/
+  base: '/quiz/widget/',
   build: {
     rollupOptions: {
       output: {

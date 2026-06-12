@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useQuizEngine } from '../hooks/useQuizEngine';
 import '../index.css';
 
-export function QuizWidget({ quizData, quizId }) {
+export function QuizWidget({ quizData, quizId, apiBase }) {
   const { currentQuestion, answers, handleAnswer, stepBack, isFinished, history, total } = useQuizEngine(quizData);
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
@@ -27,7 +27,7 @@ export function QuizWidget({ quizData, quizId }) {
       answers_log: Object.entries(answers).map(([qId, oId]) => ({ question_id: parseInt(qId), option_id: oId }))
     };
 
-    const res = await fetch(`http://localhost:8000/api/v1/public/quiz/${quizId}/submit`, {
+    const res = await fetch(`${apiBase}/public/quiz/${quizId}/submit`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)

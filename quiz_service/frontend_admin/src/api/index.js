@@ -1,4 +1,6 @@
-const API_URL = 'http://localhost:8000/api/v1/admin';
+// Относительный путь — запросы идут через тот же nginx-шлюз, что и сама админка.
+// Для локальной разработки можно переопределить: VITE_API_URL=http://localhost:8000/api/v1/admin
+const API_URL = import.meta.env.VITE_API_URL || '/quiz/api/v1/admin';
 
 export const api = {
   getQuizzes: () => fetch(`${API_URL}/quizzes/`).then(res => res.json()),

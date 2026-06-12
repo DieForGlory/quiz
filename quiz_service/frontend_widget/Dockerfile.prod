@@ -1,0 +1,15 @@
+# ===================================================================
+# PRODUCTION BUILD: quiz widget (статика, раздаётся nginx'ом)
+# ===================================================================
+FROM node:18-alpine AS build
+WORKDIR /app
+COPY package.json package-lock.json ./
+# strict-ssl false — для сборки за корпоративным SSL-прокси (как в dev Dockerfile)
+RUN npm config set strict-ssl false && npm ci
+COPY . .
+RUN npm run build
+
+FROM nginx:alpine
+COPY nginx.prod.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /app/dist /usr/share/nginx/html
+EXPOSE 80
