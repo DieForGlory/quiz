@@ -8,7 +8,7 @@ export default defineConfig({
       output: {
         entryFileNames: `assets/widget.js`,
         chunkFileNames: `assets/[name].js`,
-        assetFileNames: `assets/[name].[ext]`
+        assetFileNames: `assets/widget.[ext]`
       }
     }
   }

@@ -1,0 +1,12 @@
+body { margin: 0; font-family: system-ui, sans-serif; background: #f4f6f8; color: #333; }
+.admin-layout { display: flex; min-height: 100vh; }
+.sidebar { width: 250px; background: #1e1e2d; color: #fff; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+.sidebar a { color: #a2a3b7; text-decoration: none; padding: 10px; border-radius: 4px; transition: 0.2s; }
+.sidebar a:hover, .sidebar a.active { background: #2b2b40; color: #fff; }
+.content { flex: 1; padding: 30px; overflow-y: auto; }
+.card { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+.btn { padding: 8px 16px; background: #009ef7; color: #fff; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block;}
+.btn:hover { background: #008be1; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }

@@ -1,15 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useQuizEngine } from '../hooks/useQuizEngine';
 import '../index.css';
 
 export function QuizWidget({ quizData, quizId }) {
   const { currentQuestion, answers, handleAnswer, stepBack, isFinished, history, total } = useQuizEngine(quizData);
+  const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isStarted, setIsStarted] = useState(false);
+  const landingRef = useRef(null);
+
+  useEffect(() => {
+    if (!isStarted && landingRef.current) {
+      const startBtn = landingRef.current.querySelector('#start-quiz-btn');
+      if (startBtn) {
+        const handleStart = () => setIsStarted(true);
+        startBtn.addEventListener('click', handleStart);
+        return () => startBtn.removeEventListener('click', handleStart);
+      }
+    }
+  }, [isStarted, quizData]);
 
   const submitLead = async () => {
     const payload = {
-      contact_data: { phone },
+      contact_data: { name, phone },
       answers_log: Object.entries(answers).map(([qId, oId]) => ({ question_id: parseInt(qId), option_id: oId }))
     };
 
@@ -31,6 +45,20 @@ export function QuizWidget({ quizData, quizId }) {
     );
   }
 
+  if (!isStarted && quizData.settings?.landingData?.html) {
+    return (
+      <div className="quiz-landing-wrapper" ref={landingRef}>
+        <style>{quizData.settings.landingData.css}</style>
+        <div dangerouslySetInnerHTML={{ __html: quizData.settings.landingData.html }} />
+      </div>
+    );
+  }
+
+  if (!isStarted && !quizData.settings?.landingData?.html) {
+     setIsStarted(true);
+     return null;
+  }
+
   if (isFinished) {
     return (
       <div className="quiz-container">
@@ -38,7 +66,14 @@ export function QuizWidget({ quizData, quizId }) {
           <button className="quiz-nav-btn" onClick={stepBack}>Назад</button>
           <span>Финал</span>
         </div>
-        <div className="quiz-title">Оставьте контакт для получения результатов</div>
+        <div className="quiz-title">Оставьте контакты для получения результатов</div>
+        <input
+          className="quiz-input"
+          type="text"
+          placeholder="Ваше имя"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
         <input
           className="quiz-input"
           type="tel"
@@ -46,7 +81,7 @@ export function QuizWidget({ quizData, quizId }) {
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
         />
-        <button className="quiz-submit-btn" onClick={submitLead} disabled={!phone}>
+        <button className="quiz-submit-btn" onClick={submitLead} disabled={!phone || !name}>
           Получить результат
         </button>
       </div>
