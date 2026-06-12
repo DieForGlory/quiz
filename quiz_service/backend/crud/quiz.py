@@ -11,6 +11,16 @@ def get_quizzes(db: Session, skip: int = 0, limit: int = 100):
     return db.query(Quiz).offset(skip).limit(limit).all()
 
 
+def set_quiz_active(db: Session, quiz_id: int, is_active: bool):
+    db_quiz = db.query(Quiz).filter(Quiz.id == quiz_id).first()
+    if not db_quiz:
+        return None
+    db_quiz.is_active = is_active
+    db.commit()
+    db.refresh(db_quiz)
+    return db_quiz
+
+
 def create_quiz(db: Session, quiz: QuizCreate):
     db_quiz = Quiz(name=quiz.name, is_active=quiz.is_active, settings=quiz.settings)
     db.add(db_quiz)

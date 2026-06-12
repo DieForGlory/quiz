@@ -1,4 +1,5 @@
-﻿from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from typing import List
 from api.dependencies import get_db
@@ -7,6 +8,10 @@ from models.quiz import Lead
 from crud import quiz as crud_quiz
 
 router = APIRouter(prefix="/admin/quizzes", tags=["admin"])
+
+
+class QuizActiveUpdate(BaseModel):
+    is_active: bool
 
 
 @router.post("/", response_model=QuizResponse)
@@ -30,6 +35,14 @@ def read_quiz(quiz_id: int, db: Session = Depends(get_db)):
 @router.put("/{quiz_id}", response_model=QuizResponse)
 def update_quiz(quiz_id: int, quiz: QuizCreate, db: Session = Depends(get_db)):
     db_quiz = crud_quiz.update_quiz(db, quiz_id=quiz_id, quiz_update=quiz)
+    if db_quiz is None:
+        raise HTTPException(status_code=404, detail="Quiz not found")
+    return db_quiz
+
+
+@router.patch("/{quiz_id}/active", response_model=QuizResponse)
+def set_quiz_active(quiz_id: int, payload: QuizActiveUpdate, db: Session = Depends(get_db)):
+    db_quiz = crud_quiz.set_quiz_active(db, quiz_id=quiz_id, is_active=payload.is_active)
     if db_quiz is None:
         raise HTTPException(status_code=404, detail="Quiz not found")
     return db_quiz

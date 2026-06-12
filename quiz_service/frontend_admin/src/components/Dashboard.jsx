@@ -4,6 +4,7 @@ import { api } from '../api';
 
 export default function Dashboard() {
   const [quizzes, setQuizzes] = useState([]);
+  const [togglingId, setTogglingId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -30,6 +31,19 @@ export default function Dashboard() {
     }
   };
 
+  const handleToggleActive = async (quiz) => {
+    setTogglingId(quiz.id);
+    try {
+      const updated = await api.setQuizActive(quiz.id, !quiz.is_active);
+      setQuizzes(prev => prev.map(q => q.id === quiz.id ? { ...q, is_active: updated.is_active } : q));
+    } catch (error) {
+      console.error("Ошибка переключения статуса:", error);
+      alert("Не удалось изменить статус квиза");
+    } finally {
+      setTogglingId(null);
+    }
+  };
+
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
@@ -42,9 +56,19 @@ export default function Dashboard() {
           <div key={quiz.id} className="card">
             <h3>{quiz.name}</h3>
             <p>Статус: {quiz.is_active ? 'Активен' : 'Отключен'}</p>
-            <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
+            <div style={{ display: 'flex', gap: '10px', marginTop: '15px', flexWrap: 'wrap' }}>
               <Link to={`/quiz/${quiz.id}/builder`} className="btn">Редактор</Link>
               <Link to={`/quiz/${quiz.id}/leads`} className="btn" style={{ background: '#50cd89' }}>Заявки</Link>
+              <button
+                className="btn"
+                onClick={() => handleToggleActive(quiz)}
+                disabled={togglingId === quiz.id}
+                style={{ background: quiz.is_active ? '#f1416c' : '#50cd89' }}
+              >
+                {togglingId === quiz.id
+                  ? '...'
+                  : quiz.is_active ? 'Отключить' : 'Включить'}
+              </button>
             </div>
           </div>
         ))}
